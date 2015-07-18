@@ -16,6 +16,7 @@ file(GLOB         lib_srcs "src/*.cpp")
 ocv_set_module_sources(HEADERS ${lib_hdrs} SOURCES ${lib_srcs})
 
 ocv_create_module()
+yong_add_library_end(opencv_cudev)
 
 if(BUILD_TESTS)
   add_subdirectory(test)

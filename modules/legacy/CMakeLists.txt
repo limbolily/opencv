@@ -1,1 +1,2 @@
 ocv_define_module(legacy opencv_calib3d opencv_video opencv_ml OPTIONAL opencv_highgui)
+yong_add_library_end(opencv_legacy)

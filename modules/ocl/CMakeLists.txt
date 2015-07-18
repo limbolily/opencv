@@ -5,6 +5,7 @@ endif()
 
 set(the_description "OpenCL-accelerated Computer Vision")
 ocv_define_module(ocl opencv_core opencv_imgproc opencv_features2d opencv_objdetect opencv_video opencv_calib3d opencv_ml "${OPENCL_LIBRARIES}")
+yong_add_library_end(opencv_ocl)
 if(TARGET opencv_test_ocl)
   target_link_libraries(opencv_test_ocl "${OPENCL_LIBRARIES}")
 endif()

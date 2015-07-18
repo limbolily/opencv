@@ -127,7 +127,7 @@ macro(ocv_add_module _name)
     endif()
 
     # create option to enable/disable this module
-    option(BUILD_${the_module} "Include ${the_module} module into the OpenCV build" ${BUILD_${the_module}_INIT})
+    yong_option(BUILD_${the_module} "Include ${the_module} module into the OpenCV build" ${BUILD_${the_module}_INIT})
 
     # remember the module details
     set(OPENCV_MODULE_${the_module}_DESCRIPTION "${the_description}" CACHE INTERNAL "Brief description of ${the_module} module")
@@ -529,21 +529,32 @@ macro(ocv_create_module)
     get_native_precompiled_header(${the_module} precomp.hpp)
   endif()
 
-  add_library(${the_module} ${OPENCV_MODULE_TYPE} ${OPENCV_MODULE_${the_module}_HEADERS} ${OPENCV_MODULE_${the_module}_SOURCES}
-    "${OPENCV_CONFIG_FILE_INCLUDE_DIR}/cvconfig.h" "${OPENCV_CONFIG_FILE_INCLUDE_DIR}/opencv2/opencv_modules.hpp"
-    ${${the_module}_pch})
+  #add_library(${the_module} ${OPENCV_MODULE_TYPE} ${OPENCV_MODULE_${the_module}_HEADERS} ${OPENCV_MODULE_${the_module}_SOURCES}
+  #  "${OPENCV_CONFIG_FILE_INCLUDE_DIR}/cvconfig.h" "${OPENCV_CONFIG_FILE_INCLUDE_DIR}/opencv2/opencv_modules.hpp"
+  #  ${${the_module}_pch})
+  yong_add_library(${the_module}
+    LIB_TYPE ${OPENCV_MODULE_TYPE}
+    SOURCES ${OPENCV_MODULE_${the_module}_HEADERS}
+            ${OPENCV_MODULE_${the_module}_SOURCES}
+            "${OPENCV_CONFIG_FILE_INCLUDE_DIR}/cvconfig.h"
+            "${OPENCV_CONFIG_FILE_INCLUDE_DIR}/opencv2/opencv_modules.hpp"
+            ${${the_module}_pch})
   if(NOT the_module STREQUAL opencv_ts)
     set_target_properties(${the_module} PROPERTIES COMPILE_DEFINITIONS OPENCV_NOSTL)
   endif()
 
-  if(NOT "${ARGN}" STREQUAL "SKIP_LINK")
-    target_link_libraries(${the_module} ${OPENCV_MODULE_${the_module}_DEPS})
-    target_link_libraries(${the_module} LINK_INTERFACE_LIBRARIES ${OPENCV_MODULE_${the_module}_DEPS})
+  #if(NOT "${ARGN}" STREQUAL "SKIP_LINK")
+  #  target_link_libraries(${the_module} ${OPENCV_MODULE_${the_module}_DEPS})
+  #  target_link_libraries(${the_module} LINK_INTERFACE_LIBRARIES ${OPENCV_MODULE_${the_module}_DEPS})
     target_link_libraries(${the_module} ${OPENCV_MODULE_${the_module}_DEPS_EXT} ${OPENCV_LINKER_LIBS} ${IPP_LIBS} ${ARGN})
-    if (HAVE_CUDA)
-      target_link_libraries(${the_module} ${CUDA_LIBRARIES} ${CUDA_npp_LIBRARY})
-    endif()
-  endif()
+  #  if (HAVE_CUDA)
+  #    target_link_libraries(${the_module} ${CUDA_LIBRARIES} ${CUDA_npp_LIBRARY})
+  #  endif()
+  #endif()
+  foreach (local_dep ${OPENCV_MODULE_${the_module}_DEPS})
+    yong_add_dependence(OpenCV ${the_module}
+      DEPENDENT_LOCAL_LIBS ${local_dep})
+  endforeach()
 
   add_dependencies(opencv_modules ${the_module})
 
@@ -551,24 +562,24 @@ macro(ocv_create_module)
     set_target_properties(${the_module} PROPERTIES FOLDER "modules")
   endif()
 
-  set_target_properties(${the_module} PROPERTIES
-    OUTPUT_NAME "${the_module}${OPENCV_DLLVERSION}"
-    DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
-    ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
-    LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
-    RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-    INSTALL_NAME_DIR lib
-  )
-
-  # For dynamic link numbering convenions
-  if(NOT ANDROID)
-    # Android SDK build scripts can include only .so files into final .apk
-    # As result we should not set version properties for Android
-    set_target_properties(${the_module} PROPERTIES
-      VERSION ${OPENCV_LIBVERSION}
-      SOVERSION ${OPENCV_SOVERSION}
-    )
-  endif()
+  #  set_target_properties(${the_module} PROPERTIES
+  #    OUTPUT_NAME "${the_module}${OPENCV_DLLVERSION}"
+  #    DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
+  #    ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
+  #    LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
+  #    RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+  #    INSTALL_NAME_DIR lib
+  #  )
+  #
+  #  # For dynamic link numbering convenions
+  #  if(NOT ANDROID)
+  #    # Android SDK build scripts can include only .so files into final .apk
+  #    # As result we should not set version properties for Android
+  #    set_target_properties(${the_module} PROPERTIES
+  #      VERSION ${OPENCV_LIBVERSION}
+  #      SOVERSION ${OPENCV_SOVERSION}
+  #    )
+  #  endif()
 
   if((NOT DEFINED OPENCV_MODULE_TYPE AND BUILD_SHARED_LIBS)
       OR (DEFINED OPENCV_MODULE_TYPE AND OPENCV_MODULE_TYPE STREQUAL SHARED))
@@ -582,18 +593,19 @@ macro(ocv_create_module)
     set_target_properties(${the_module} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc /DEBUG")
   endif()
 
-  ocv_install_target(${the_module} EXPORT OpenCVModules
-    RUNTIME DESTINATION ${OPENCV_BIN_INSTALL_PATH} COMPONENT main
-    LIBRARY DESTINATION ${OPENCV_LIB_INSTALL_PATH} COMPONENT main
-    ARCHIVE DESTINATION ${OPENCV_LIB_INSTALL_PATH} COMPONENT main
-    )
+  #ocv_install_target(${the_module} EXPORT OpenCVModules
+  #  RUNTIME DESTINATION ${OPENCV_BIN_INSTALL_PATH} COMPONENT main
+  #  LIBRARY DESTINATION ${OPENCV_LIB_INSTALL_PATH} COMPONENT main
+  #  ARCHIVE DESTINATION ${OPENCV_LIB_INSTALL_PATH} COMPONENT main
+  #  )
 
   # only "public" headers need to be installed
   if(OPENCV_MODULE_${the_module}_HEADERS AND ";${OPENCV_MODULES_PUBLIC};" MATCHES ";${the_module};")
     foreach(hdr ${OPENCV_MODULE_${the_module}_HEADERS})
       string(REGEX REPLACE "^.*opencv2/" "opencv2/" hdr2 "${hdr}")
       if(NOT hdr2 MATCHES "opencv2/${the_module}/private.*" AND hdr2 MATCHES "^(opencv2/?.*)/[^/]+.h(..)?$" )
-        install(FILES ${hdr} DESTINATION "${OPENCV_INCLUDE_INSTALL_PATH}/${CMAKE_MATCH_1}" COMPONENT main)
+        #install(FILES ${hdr} DESTINATION "${OPENCV_INCLUDE_INSTALL_PATH}/${CMAKE_MATCH_1}" COMPONENT main)
+        yong_install_header_files(OpenCV "${CMAKE_MATCH_1}" ${hdr})
       endif()
     endforeach()
   endif()

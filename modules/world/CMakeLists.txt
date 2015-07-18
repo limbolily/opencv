@@ -21,6 +21,7 @@ endif()
 ocv_glob_module_sources()
 ocv_module_include_directories()
 ocv_create_module(SKIP_LINK)
+yong_add_library_end(opencv_world)
 
 #TODO: try to use try_compile to find real object file extension/location
 if(CMAKE_GENERATOR MATCHES "^Visual.*$")

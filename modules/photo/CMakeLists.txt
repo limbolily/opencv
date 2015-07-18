@@ -5,3 +5,4 @@ if(HAVE_CUDA)
 endif()
 
 ocv_define_module(photo opencv_imgproc OPTIONAL opencv_cudaarithm opencv_cudaimgproc)
+yong_add_library_end(opencv_photo)

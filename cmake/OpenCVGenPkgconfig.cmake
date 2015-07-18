@@ -80,6 +80,6 @@ configure_file("${OpenCV_SOURCE_DIR}/cmake/templates/opencv-XXX.pc.in"
                "${CMAKE_BINARY_DIR}/unix-install/${OPENCV_PC_FILE_NAME}"
                @ONLY IMMEDIATE)
 
-if(UNIX AND NOT ANDROID)
-  install(FILES ${CMAKE_BINARY_DIR}/unix-install/${OPENCV_PC_FILE_NAME} DESTINATION ${OPENCV_LIB_INSTALL_PATH}/pkgconfig)
-endif()
+#if(UNIX AND NOT ANDROID)
+#  install(FILES ${CMAKE_BINARY_DIR}/unix-install/${OPENCV_PC_FILE_NAME} DESTINATION ${OPENCV_LIB_INSTALL_PATH}/pkgconfig)
+#endif()

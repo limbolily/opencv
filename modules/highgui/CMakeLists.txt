@@ -11,12 +11,12 @@ ocv_clear_vars(GRFMT_LIBS)
 
 if(HAVE_PNG OR HAVE_TIFF OR HAVE_OPENEXR)
   ocv_include_directories(${ZLIB_INCLUDE_DIRS})
-  list(APPEND GRFMT_LIBS ${ZLIB_LIBRARIES})
+  #list(APPEND GRFMT_LIBS ${ZLIB_LIBRARIES})
 endif()
 
 if(HAVE_JPEG)
   ocv_include_directories(${JPEG_INCLUDE_DIR})
-  list(APPEND GRFMT_LIBS ${JPEG_LIBRARIES})
+  #list(APPEND GRFMT_LIBS ${JPEG_LIBRARIES})
 endif()
 
 if(WITH_WEBP)
@@ -28,12 +28,12 @@ endif()
 if(HAVE_PNG)
   add_definitions(${PNG_DEFINITIONS})
   ocv_include_directories(${PNG_INCLUDE_DIR})
-  list(APPEND GRFMT_LIBS ${PNG_LIBRARIES})
+  #list(APPEND GRFMT_LIBS ${PNG_LIBRARIES})
 endif()
 
 if(HAVE_TIFF)
   ocv_include_directories(${TIFF_INCLUDE_DIR})
-  list(APPEND GRFMT_LIBS ${TIFF_LIBRARIES})
+  #list(APPEND GRFMT_LIBS ${TIFF_LIBRARIES})
 endif()
 
 if(HAVE_JASPER)
@@ -257,6 +257,21 @@ ocv_set_module_sources(HEADERS ${highgui_ext_hdrs} SOURCES ${highgui_srcs} ${hig
 ocv_module_include_directories()
 
 ocv_create_module(${GRFMT_LIBS} ${HIGHGUI_LIBRARIES})
+yong_add_dependence(OpenCV opencv_highgui
+  DEPENDENT_PROJECT jpeg_turbo
+    COMMIT_HASH ${JPEG_TURBO_HASH}
+    DEPENDENT_LIBS jpeg_turbo
+  DEPENDENT_PROJECT png
+    COMMIT_HASH ${PNG_HASH}
+    DEPENDENT_LIBS png
+  DEPENDENT_PROJECT tiff
+    COMMIT_HASH ${TIFF_HASH}
+    DEPENDENT_LIBS tiff
+  DEPENDENT_PROJECT zlib
+    COMMIT_HASH ${ZLIB_HASH}
+    DEPENDENT_LIBS zlib
+  )
+yong_add_library_end(opencv_highgui)
 
 if(APPLE)
   ocv_check_flag_support(OBJCXX "-fobjc-exceptions" HAVE_OBJC_EXCEPTIONS)
@@ -300,22 +315,27 @@ if(WIN32 AND WITH_FFMPEG)
   set(ffmpeg_bare_name_ver "opencv_ffmpeg${OPENCV_DLLVERSION}${FFMPEG_SUFFIX}.dll")
   set(ffmpeg_path "${OpenCV_SOURCE_DIR}/3rdparty/ffmpeg/${ffmpeg_bare_name}")
 
-  if(MSVC_IDE)
-    add_custom_command(TARGET ${the_module} POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/Release/${ffmpeg_bare_name_ver}"
-                       COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/Debug/${ffmpeg_bare_name_ver}"
-                       COMMENT "Copying ${ffmpeg_path} to the output directory")
-  elseif(MSVC AND (CMAKE_GENERATOR MATCHES "Visual"))
-    add_custom_command(TARGET ${the_module} POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/${ffmpeg_bare_name_ver}"
-                       COMMENT "Copying ${ffmpeg_path} to the output directory")
-  else()
-    add_custom_command(TARGET ${the_module} POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/${ffmpeg_bare_name_ver}"
-                       COMMENT "Copying ${ffmpeg_path} to the output directory")
-  endif()
+  #if(MSVC_IDE)
+  #  add_custom_command(TARGET ${the_module} POST_BUILD
+  #                     COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/Release/${ffmpeg_bare_name_ver}"
+  #                     COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/Debug/${ffmpeg_bare_name_ver}"
+  #                     COMMENT "Copying ${ffmpeg_path} to the output directory")
+  #elseif(MSVC AND (CMAKE_GENERATOR MATCHES "Visual"))
+  #  add_custom_command(TARGET ${the_module} POST_BUILD
+  #                     COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/${ffmpeg_bare_name_ver}"
+  #                     COMMENT "Copying ${ffmpeg_path} to the output directory")
+  #else()
+  #  add_custom_command(TARGET ${the_module} POST_BUILD
+  #                     COMMAND ${CMAKE_COMMAND} -E copy "${ffmpeg_path}" "${EXECUTABLE_OUTPUT_PATH}/${ffmpeg_bare_name_ver}"
+  #                     COMMENT "Copying ${ffmpeg_path} to the output directory")
+  #endif()
 
-  install(FILES "${ffmpeg_path}" DESTINATION ${OPENCV_BIN_INSTALL_PATH} COMPONENT main RENAME "${ffmpeg_bare_name_ver}")
+  #install(FILES "${ffmpeg_path}" DESTINATION ${OPENCV_BIN_INSTALL_PATH} COMPONENT main RENAME "${ffmpeg_bare_name_ver}")
+  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+    install(FILES "${ffmpeg_path}"
+      DESTINATION "${_OpenCV_install_runtime_prefix}"
+      OPTIONAL)
+  endforeach()
 endif()
 
 ocv_add_accuracy_tests()

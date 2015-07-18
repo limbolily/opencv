@@ -1,4 +1,4 @@
-/*M///////////////////////////////////////////////////////////////////////////////////////
+﻿/*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
 //
@@ -95,7 +95,7 @@ bool CvCalibFilter::SetEtalon( CvCalibEtalonType type, double* params,
 
     Stop();
 
-    if (latestPoints != NULL)
+    //if (latestPoints != NULL)
     {
         for( i = 0; i < MAX_CAMERAS; i++ )
             cvFree( latestPoints + i );
@@ -529,7 +529,7 @@ void CvCalibFilter::DrawPoints( CvMat** dstarr )
         return;
     }
 
-    if( latestCounts )
+    //if( latestCounts )
     {
         for( i = 0; i < cameraCount; i++ )
         {

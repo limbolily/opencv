@@ -22,6 +22,7 @@ if(HAVE_NVCUVID)
 endif()
 
 ocv_create_module(${extra_libs})
+yong_add_library_end(opencv_cudacodec)
 
 ocv_add_precompiled_headers(${the_module})
 

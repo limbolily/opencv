@@ -6,6 +6,7 @@ set(the_description "Auxiliary module for Android native camera support")
 set(OPENCV_MODULE_TYPE STATIC)
 
 ocv_define_module(androidcamera INTERNAL opencv_core log dl)
+yong_add_library_end(opencv_androidcamera)
 ocv_include_directories("${CMAKE_CURRENT_SOURCE_DIR}/camera_wrapper" "${OpenCV_SOURCE_DIR}/platforms/android/service/engine/jni/include")
 
 # Android source tree for native camera

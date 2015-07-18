@@ -18,5 +18,6 @@ ocv_add_module(ts opencv_core opencv_imgproc opencv_highgui)
 ocv_glob_module_sources()
 ocv_module_include_directories()
 ocv_create_module()
+yong_add_library_end(opencv_ts)
 
 ocv_add_precompiled_headers(${the_module})
