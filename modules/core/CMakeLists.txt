@@ -1,5 +1,5 @@
 set(the_description "The Core Functionality")
-ocv_add_module(core PRIVATE_REQUIRED ${ZLIB_LIBRARIES} "${OPENCL_LIBRARIES}" OPTIONAL opencv_cudev)
+ocv_add_module(core PRIVATE_REQUIRED "${OPENCL_LIBRARIES}" OPTIONAL opencv_cudev)
 ocv_module_include_directories()
 
 if(HAVE_WINRT)
@@ -16,7 +16,7 @@ file(GLOB lib_cuda_hdrs_detail "include/opencv2/${name}/cuda/detail/*.hpp" "incl
 source_group("Cuda Headers"         FILES ${lib_cuda_hdrs})
 source_group("Cuda Headers\\Detail" FILES ${lib_cuda_hdrs_detail})
 
-ocv_glob_module_sources(SOURCES "${opencv_core_BINARY_DIR}/version_string.inc"
+ocv_glob_module_sources(SOURCES "${OpenCV_BINARY_DIR}/modules/core/version_string.inc"
                         HEADERS ${lib_cuda_hdrs} ${lib_cuda_hdrs_detail})
 
 ocv_create_module()

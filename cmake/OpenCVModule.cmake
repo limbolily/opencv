@@ -167,7 +167,7 @@ macro(ocv_add_module _name)
     if(NOT BUILD_${the_module})
       return() # extra protection from redefinition
     endif()
-    project(${the_module})
+    #project(${the_module})
   endif(OPENCV_INITIAL_PASS)
 endmacro()
 
@@ -546,7 +546,6 @@ macro(ocv_create_module)
   #if(NOT "${ARGN}" STREQUAL "SKIP_LINK")
   #  target_link_libraries(${the_module} ${OPENCV_MODULE_${the_module}_DEPS})
   #  target_link_libraries(${the_module} LINK_INTERFACE_LIBRARIES ${OPENCV_MODULE_${the_module}_DEPS})
-    target_link_libraries(${the_module} ${OPENCV_MODULE_${the_module}_DEPS_EXT} ${OPENCV_LINKER_LIBS} ${IPP_LIBS} ${ARGN})
   #  if (HAVE_CUDA)
   #    target_link_libraries(${the_module} ${CUDA_LIBRARIES} ${CUDA_npp_LIBRARY})
   #  endif()
@@ -555,6 +554,8 @@ macro(ocv_create_module)
     yong_add_dependence(OpenCV ${the_module}
       DEPENDENT_LOCAL_LIBS ${local_dep})
   endforeach()
+  target_link_libraries(${the_module}
+    ${OPENCV_MODULE_${the_module}_DEPS_EXT} ${OPENCV_LINKER_LIBS} ${IPP_LIBS} ${ARGN})
 
   add_dependencies(opencv_modules ${the_module})
 
@@ -562,6 +563,10 @@ macro(ocv_create_module)
     set_target_properties(${the_module} PROPERTIES FOLDER "modules")
   endif()
 
+  set_target_properties(${the_module} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   #  set_target_properties(${the_module} PROPERTIES
   #    OUTPUT_NAME "${the_module}${OPENCV_DLLVERSION}"
   #    DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
