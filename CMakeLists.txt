@@ -482,10 +482,10 @@ include(cmake/OpenCVExtraTargets.cmake)
 # opencv.hpp and legacy headers
 add_subdirectory(include)
 
-set(JPEG_TURBO_HASH c5f46459881c068960fae0d2257cd907e917f8cc)
-set(PNG_HASH c552004bfc1a471e9e1925fdea4b6d2c30b42f6b)
-set(TIFF_HASH c391be0872a593de8362d76a60ad879dcbcc69b4)
-set(ZLIB_HASH 04ad1c7e937d2835c1c54c50bec9cfaa4f43a1c8)
+set(JPEG_TURBO_HASH 784f56b4ba37bb962596d01be90fcd546c022059)
+set(PNG_HASH 09f6e7e8097478071326763119d4bc8d5f3a9b9c)
+set(TIFF_HASH 183b08069f3b4c828ad86b749057a6757d47136b)
+set(ZLIB_HASH 1179e5bd226d4c8f45a5e26c3154216fc6c673b1)
 
 # OpenCV modules
 add_subdirectory(modules)
